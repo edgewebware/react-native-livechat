@@ -352,6 +352,7 @@ export default class LiveChat extends Component {
 				connectionState: 'connected',
 				onlineStatus: availability === 'online',
 			})
+			customerSDK.updateCustomer(this.props.customerData);
 			customerSDK.listChats().then((data) => {
 				const { chatsSummary, totalChats } = data
 				if (totalChats) {
@@ -493,6 +494,7 @@ export default class LiveChat extends Component {
 }
 
 LiveChat.propTypes = {
+	customerData: PropTypes.object,
 	license: PropTypes.string.isRequired,
 	movable: PropTypes.bool,
 	bubble: PropTypes.element,

@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, Dimensions, Platform } from 'react-native'
 import { View } from 'react-native-animatable'
 import PropTypes from 'prop-types'
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat, Message, Bubble, Avatar, SystemMessage, InputToolbar, Send } from 'react-native-gifted-chat'
 import NavigationBar from './NavigationBar'
 
 const { height, width } = Dimensions.get('window')
@@ -13,6 +13,7 @@ export default class Chat extends React.Component {
 		super(props)
 
 		this.renderFooter = this.renderFooter.bind(this)
+		this.renderSend = this.renderSend.bind(this)
 	}
 
 	handleSend = ([message]) => {
@@ -27,7 +28,102 @@ export default class Chat extends React.Component {
 				</View>
 			)
 		}
-		return null
+		return <View style={styles.footerContainer} />
+	}
+
+	renderBubble(props) {
+		return (
+			<Bubble
+	      {...props}
+	      wrapperStyle={{
+	        left: {
+	          backgroundColor: '#F3F5FF'
+	        },
+	        right: {
+	          backgroundColor: '#5C5CE4'
+	        }
+	      }}
+	      textStyle={{
+	        left: {
+	          color: '#414A75'
+	        },
+	        right: {
+	          color: '#fff'
+	        }
+	      }}
+	    />
+		)
+	}
+
+	renderAvatar(props) {
+		return (
+			<Avatar
+				{...props}
+				containerStyle={{
+					left: {
+						backgroundColor: 'white',
+						borderRadius: 25
+					}
+				}}
+			/>
+		)
+	}
+
+	renderMessage(props) {
+		return (
+			<Message
+				{...props}
+				containerStyle={{
+					left: {
+						marginBottom: 12,
+						alignItems: 'center'
+					},
+					right: {
+						marginBottom: 12,
+					}
+				}}
+			/>
+		)
+	}
+
+	renderSystemMessage(props) {
+		return (
+			<SystemMessage
+				{...props}
+				textStyle={{
+					color: 'white'
+				}}
+			/>
+		)
+	}
+
+	renderInputToolbar(props) {
+		return (
+			<InputToolbar
+				{...props}
+				containerStyle={{
+					marginHorizontal: 10,
+    			borderRadius: 3,
+					backgroundColor: '#EEF0F5'
+				}}
+			/>
+		)
+	}
+
+	renderSend(props) {
+		return (
+			 <Send
+        {...props}
+        containerStyle={{
+        	justifyContent: 'center',
+    	    alignItems: 'center',
+    	    alignSelf: 'center',
+    	    marginRight: 15,
+        }}
+      >
+        {this.props.sendIcon}
+      </Send>
+		)
 	}
 
 	render() {
@@ -42,6 +138,7 @@ export default class Chat extends React.Component {
 			chatTitle,
 			closeChat,
 			headerText,
+			navbar,
 			...restProps
 		} = this.props
 		const isReconnecting = this.props.connectionState !== 'connected'
@@ -54,13 +151,11 @@ export default class Chat extends React.Component {
 						this.chat = ref
 					}}
 				>
-					<NavigationBar chatTitle={chatTitle} closeChat={closeChat} />
+					{navbar ? navbar(closeChat) : <NavigationBar chatTitle={chatTitle} closeChat={closeChat} />}
 					{isReconnecting && <Text style={styles.connectionStatus}>Reconnecting...</Text>}
-					{headerText && <Text style={styles.status}>{headerText}</Text>}
 					<GiftedChat
 						inverted={false}
 						messages={messages}
-						scrollToBottom
 						renderFooter={this.renderFooter}
 						onSend={this.handleSend}
 						onInputTextChanged={onInputChange}
@@ -69,6 +164,14 @@ export default class Chat extends React.Component {
 						onQuickReply={onQuickReply}
 						disableComposer={disableComposer}
 						showAvatarForEveryMessage={false}
+						style={{paddingHorizontal: 20}}
+						textInputStyle={{fontSize: 16, fontFamily: 'Source Sans Pro', textAlignVertical: 'top', paddingTop: 10}}
+						renderInputToolbar={this.renderInputToolbar}
+						renderMessage={this.renderMessage}
+						renderBubble={this.renderBubble}
+						renderAvatar={this.renderAvatar}
+						renderSystemMessage={this.renderSystemMessage}
+						renderSend={this.renderSend}
 						{...restProps}
 					/>
 				</View>
@@ -105,7 +208,9 @@ const styles = StyleSheet.create({
 		top: 0,
 		left: 0,
 		flexDirection: 'column',
-		backgroundColor: '#fff',
+    backgroundColor: 'rgba(51, 51, 204, 0.65)',
+    paddingTop: Platform.OS === 'ios' ? 50 : 25,
+		zIndex: 1000
 	},
 	navigation: {
 		flex: 1,

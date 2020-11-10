@@ -27,13 +27,6 @@ export default class LiveChat extends Component {
 			isTyping: false,
 			onlineStatus: false,
 			connectionState: 'not_connected',
-			bubble: props.bubble ? (
-				props.bubble
-			) : (
-				<View style={this.styles.bubbleStyle}>
-					<Image source={chatIcon} style={this.styles.icon} />
-				</View>
-			),
 		}
 	}
 
@@ -435,10 +428,12 @@ export default class LiveChat extends Component {
 
 	openChat = () => {
 		this.setState({ isChatOn: true })
+		this.props.onOpened()
 	}
 
 	closeChat = () => {
 		this.setState({ isChatOn: false })
+		this.props.onClosed()
 	}
 
 	getHeaderText = () => {
@@ -465,9 +460,8 @@ export default class LiveChat extends Component {
 			<ChatBubble
 				key="bubble"
 				openChat={this.openChat}
-				bubble={this.state.bubble}
+				bubble={this.props.bubble}
 				disabled={this.props.movable}
-				styles={this.props.bubbleStyles}
 			/>,
 			this.visitorSDK && (
 				<Chat
@@ -498,25 +492,22 @@ LiveChat.propTypes = {
 	license: PropTypes.string.isRequired,
 	movable: PropTypes.bool,
 	bubble: PropTypes.element,
-	bubbleColor: PropTypes.string,
-	bubbleStyles: PropTypes.object,
 	chatTitle: PropTypes.string,
 	greeting: PropTypes.string,
 	noAgents: PropTypes.string,
 	onLoaded: PropTypes.func,
+	onOpened: PropTypes.func,
+	onClosed: PropTypes.func,
 	clientId: PropTypes.string,
 	redirectUri: PropTypes.string,
 }
 
 LiveChat.defaultProps = {
-	bubbleColor: '#2962FF',
-	bubbleStyles: {
-		position: 'absolute',
-		bottom: 12,
-		right: 12,
-	},
+	customerData: {},
 	movable: true,
 	onLoaded: () => {},
+	onOpened: () => {},
+	onClosed: () => {},
 	group: 0,
 	chatTitle: 'Chat with us!',
 	greeting: 'Welcome to our LiveChat!\nHow may We help you?',

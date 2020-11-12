@@ -462,6 +462,7 @@ export default class LiveChat extends Component {
 				openChat={this.openChat}
 				bubble={this.props.bubble}
 				disabled={this.props.movable}
+				style={this.props.bubbleStyle}
 			/>,
 			this.visitorSDK && (
 				<Chat
@@ -482,7 +483,7 @@ export default class LiveChat extends Component {
 					headerText={this.getHeaderText()}
 				/>
 			),
-			<AuthWebView key="auth" />,
+			<AuthWebView key="auth" style={{position: 'absolute', zIndex: -1}} />,
 		]
 	}
 }
@@ -492,6 +493,7 @@ LiveChat.propTypes = {
 	license: PropTypes.string.isRequired,
 	movable: PropTypes.bool,
 	bubble: PropTypes.element,
+	bubbleStyle: PropTypes.object,
 	chatTitle: PropTypes.string,
 	greeting: PropTypes.string,
 	noAgents: PropTypes.string,
